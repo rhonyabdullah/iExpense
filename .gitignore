@@ -52,3 +52,4 @@ google-services.json
 # Project specific
 /.opencode/config.json
 /stitch
+.junie
