@@ -1,10 +1,10 @@
-# AGENTS.md — MVI Clean Architecture (KMP + Compose Multiplatform)
+# AGENTS.md — iExpense (KMP + Compose Multiplatform)
 
 ## Project Overview
 
-This document describes a **reusable architecture template** for Kotlin Multiplatform (KMP) applications targeting Android and iOS with Compose Multiplatform. It follows **Clean Architecture** with **MVI (Model-View-Intent)** in the Presentation layer.
+This document is the **agent instruction set** for the **iExpense** Kotlin Multiplatform application. iExpense is a personal finance tracker built for Android and iOS with Compose Multiplatform. It follows **Clean Architecture** with **MVI (Model-View-Intent)** in the Presentation layer.
 
-Ready to drop into a new empty KMP project. Replace `{Entity}`, `{Feature}`, `{Action}` placeholders with your actual names.
+All code generation, review, and modification tasks must comply with both this document and the project's **[`DESIGN.md`](DESIGN.md)** (the iExpense Design System). The design system defines all tokens, colors, typography, spacing, and reusable component specs.
 
 ---
 
@@ -80,16 +80,16 @@ Follow these naming conventions to maintain consistency:
 
 | Component | Convention | Example |
 |-----------|-----------|---------|
-| **Store** | `{Feature}Store.kt` / `{Feature}ViewModel.kt` | `HomeStore.kt`, `SearchStore.kt`, `HomeViewModel` |
-| **State** | `{Feature}State.kt` (data class) | `HomeState.kt`, `DetailsState.kt` |
-| **Intent** | `{Feature}Intent.kt` (sealed interface) | `HomeIntent.kt` |
-| **Effect** | `{Feature}Effect.kt` (sealed interface extending `UiEffect`) | `DetailsEffect.kt` |
-| **Effect Handler** | `{Feature}EffectHandler.kt` (extends `BaseEffectHandler`) | `HomeEffectHandler.kt` |
-| **UI Models** | `{Entity}Ui.kt` (data class) | `ProductUi.kt`, `ArticleUi.kt` |
-| **Use Cases** | `{Action}{Entity}UseCase.kt` | `GetProductsUseCase.kt`, `SearchArticlesUseCase.kt` |
-| **Domain Models** | `{Entity}Model.kt` | `ProductModel.kt` |
-| **Repositories** | `{Entity}Repository.kt` (Interface) and `{Entity}RepositoryImpl.kt` | `ProductRepository.kt` |
-| **API Services** | `{Entity}ApiService.kt` (Interface) and `{Entity}ApiServiceImpl.kt` | `ProductApiService.kt` |
+| **Store** | `{Feature}Store.kt` / `{Feature}ViewModel.kt` | `HomeStore.kt`, `AddExpenseViewModel`, `AuthStore.kt` |
+| **State** | `{Feature}State.kt` (data class) | `HomeState.kt`, `LoginState.kt` |
+| **Intent** | `{Feature}Intent.kt` (sealed interface) | `AddExpenseIntent.kt` |
+| **Effect** | `{Feature}Effect.kt` (sealed interface extending `UiEffect`) | `AuthEffect.kt` |
+| **Effect Handler** | `{Feature}EffectHandler.kt` (extends `BaseEffectHandler`) | `AuthEffectHandler.kt` |
+| **UI Models** | `{Entity}Ui.kt` (data class) | `ExpenseUi.kt`, `CategoryUi.kt` |
+| **Use Cases** | `{Action}{Entity}UseCase.kt` | `GetExpensesUseCase.kt`, `AddTransactionUseCase.kt` |
+| **Domain Models** | `{Entity}Model.kt` | `ExpenseModel.kt`, `CategoryModel.kt` |
+| **Repositories** | `{Entity}Repository.kt` (Interface) and `{Entity}RepositoryImpl.kt` | `ExpenseRepository.kt` |
+| **API Services** | `{Entity}ApiService.kt` (Interface) and `{Entity}ApiServiceImpl.kt` | `AuthApiService.kt` |
 
 ---
 
@@ -206,7 +206,7 @@ internal fun {Feature}Screen(
         Scaffold(...) { innerPadding ->
             // Content
         }
-        LoadingOverlay(visible = state.isLoading)
+        AppLoadingOverlay(visible = state.isLoading)
     }
 }
 ```
@@ -279,13 +279,13 @@ A single canonical enum owned by the domain layer. Used across all layers:
 sealed interface EntityCategory {
     val key: String
 
-    enum class Primary(val key: String) : EntityCategory {
-        POPULAR("popular"), TOP_RATED("top_rated"), TRENDING("trending"),
-        UPCOMING("upcoming"), NOW_PLAYING("now_playing")
+    enum class ExpenseCategory(val key: String) : EntityCategory {
+        FOOD("food"), TRANSPORT("transport"), UTILITIES("utilities"),
+        ENTERTAINMENT("entertainment"), HEALTH("health"), SHOPPING("shopping")
     }
 
-    enum class Secondary(val key: String) : EntityCategory {
-        POPULAR("popular"), TOP_RATED("top_rated"), TRENDING("trending")
+    enum class IncomeCategory(val key: String) : EntityCategory {
+        SALARY("salary"), INVESTMENT("investment"), FREELANCE("freelance")
     }
 }
 ```
@@ -337,7 +337,48 @@ To maintain Clean Architecture, follow these rules:
 
 ## Compose UI System
 
-> **Theming**: If your project supports dynamic accent switching, see [theming-dynamic.md](./architecture/ui/theming-dynamic.md). For a single static theme, see [theming-static.md](./architecture/ui/theming-static.md).
+> **Primary Design Reference**: All colors, typography, spacing, shape tokens, and component specifications are defined in **[`DESIGN.md`](DESIGN.md)**. When implementing or reviewing UI code, always consult `DESIGN.md` first.
+>
+> **Color Sources**: Light/dark hex values live in [`design/DESIGN-light.md`](design/DESIGN-light.md) and [`design/DESIGN-dark.md`](design/DESIGN-dark.md).
+>
+> **Theming Implementation**: If your project supports dynamic accent switching, see [`architecture/ui/theming-dynamic.md`](./architecture/ui/theming-dynamic.md). For a single static theme, see [`architecture/ui/theming-static.md`](./architecture/ui/theming-static.md).
+>
+> **Token System**: Semantic tokens (`backgroundPrimary`, `textPrimary`, `heading3xl`, `spacingLg`, `radiusMd`, etc.) are consumed via `DesignSystem.colors` and `DesignSystem.typography`. Never hardcode hex or `dp` values in screen code.
+
+### Design System File Architecture
+
+When generating or syncing design tokens to the codebase, produce files in this structure (per [`DESIGN.md`](DESIGN.md) §13):
+
+```text
+composeApp/src/commonMain/kotlin/com/example/core/component/theme/
+├── ColorPalettes.kt          ← Raw hex constants (~150 colors)
+├── CustomThemeColors.kt      ← Semantic data class + createTheme()
+├── AppTypography.kt          ← Typography data class with Poppins
+├── Dimens.kt                 ← Spacing, radius, icon, button tokens
+└── Theme.kt                  ← AppTheme composable + LocalCustomColors / LocalAppTypography
+
+composeApp/src/commonMain/kotlin/com/example/core/component/
+├── button/
+│   ├── AppButton.kt
+│   └── AppButtonConfig.kt
+├── textfield/
+│   ├── AppTextField.kt
+│   ├── AppTextFieldConfig.kt
+│   ├── AppPasswordTextField.kt
+│   └── AppPasswordTextFieldConfig.kt
+├── header/
+│   ├── AppHeaderPage.kt
+│   └── AppCenterHeaderPage.kt
+├── overlay/
+│   └── AppLoadingOverlay.kt
+├── toast/
+│   ├── AppToast.kt
+│   ├── AppToastCard.kt
+│   └── AppToastHost.kt
+└── misc/
+    ├── AppOtpInputField.kt
+    └── ForbiddenContent.kt
+```
 
 ### Focus Management
 
@@ -496,6 +537,7 @@ These documents cover Presentation layer implementation details, Compose pattern
 
 | Document | Content |
 |----------|---------|
+| **[`DESIGN.md`](DESIGN.md)** | **Primary design spec** — colors, typography, spacing, shape tokens, component specs, and do's/don'ts |
 | [screen-state-collection.md](./architecture/ui/screen-state-collection.md) | `collectAsStateWithLifecycle` usage, state hoisting, lifecycle awareness |
 | [event-dispatching.md](./architecture/ui/event-dispatching.md) | Intent dispatching, Effect handling, MVI unidirectional flow in Compose |
 | [loading-error-content-states.md](./architecture/ui/loading-error-content-states.md) | Loading shimmer, error placeholders, empty states, content flip |
