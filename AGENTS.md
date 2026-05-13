@@ -6,6 +6,10 @@ This document is the **agent instruction set** for the **iExpense** Kotlin Multi
 
 All code generation, review, and modification tasks must comply with both this document and the project's **[`DESIGN.md`](DESIGN.md)** (the iExpense Design System). The design system defines all tokens, colors, typography, spacing, and reusable component specs.
 
+## Stitch Assets Storage
+
+When downloading assets (screenshots, HTML code, images, or any other hosted files) from Stitch design screens, **always save them into `rootDir/stitch/`** (i.e. `[path_to_project]/iExpense/stitch/`). Do not place them in the project root or any other directory.
+
 ---
 
 ## Build Commands
