@@ -176,16 +176,23 @@ abstract class BaseEffectHandler<T : UiEffect> {
 
 ### Route → Screen → Content Three-Layer Structure
 
-Every screen has a `*Route` function that receives `NavBackStack<NavKey>`, wires up the ViewModel and EffectHandler, and delegates to a stateless `*Screen`:
+Every screen has a `*Route` function that receives `NavBackStack<NavKey>`, wires up the ViewModel and EffectHandler, and delegates to a stateless `*Screen`.
+
+The Route must follow this exact injection pattern:
 
 ```kotlin
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.compose.koinInject
+import org.koin.core.parameter.parametersOf
+
 @Composable
 fun {Feature}Route(backStack: NavBackStack<NavKey>) {
+    val unknownErrorMessage = stringResource(Res.string.unknown_error)
     val viewModel: {Feature}ViewModel = koinViewModel()
-    val state by viewModel.state.collectAsStateWithLifecycle()
     val effectHandler: {Feature}EffectHandler = koinInject {
-        parametersOf(backStack)
+        parametersOf(backStack, unknownErrorMessage)
     }
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect(effectHandler::handleEffect)
@@ -200,7 +207,20 @@ fun {Feature}Route(backStack: NavBackStack<NavKey>) {
         onIntent = viewModel::dispatch
     )
 }
+```
 
+Rules for the Route:
+- **Only Koin references go in Route**: `koinViewModel()`, `koinInject { parametersOf(...) }`, `stringResource()`
+- **Never create ViewModels or EffectHandlers manually** — always inject via Koin
+- **EffectHandler receives two parameters**: `NavBackStack<NavKey>` and `String` (unknown-error message), in that order
+- **State collection**: Always use `collectAsStateWithLifecycle()`, never plain `collectAsState()`
+- **Effect wiring**: Use `LaunchedEffect(viewModel.effect)` forwarding to `effectHandler::handleEffect`
+- **Init dispatch**: Use `LaunchedEffect(Unit)` to call `viewModel.dispatch({Feature}Intent.OnInit)`
+- **Delegation to Screen**: Pass only `state` and `onIntent = viewModel::dispatch`
+
+The Screen must be completely stateless:
+
+```kotlin
 @Composable
 internal fun {Feature}Screen(
     state: {Feature}State,
@@ -314,6 +334,9 @@ Modules are defined in `composeApp/src/commonMain/kotlin/com/mobile/iexpense/di/
 | DAO | `single { get<AppDatabase>().myDao() }` | `databaseModule` |
 | Network DataSource | `singleOf(::MyNetworkDataSource)` | `networkModule` |
 | API Service | `singleOf(::MyApiImpl) bind MyApiService::class` | `networkModule` |
+| EffectHandler (with params) | `factoryOf(::MyEffectHandler)` | `presentationModule` |
+
+> **EffectHandler** is registered as `factoryOf` because it receives constructor parameters (`NavBackStack<NavKey>`, `unknownErrorMessage`) via `parametersOf` at injection time. Never register it as `single` or `viewModelOf`.
 
 ### Module Order
 
