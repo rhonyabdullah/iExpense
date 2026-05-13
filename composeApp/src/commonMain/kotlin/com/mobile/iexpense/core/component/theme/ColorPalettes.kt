@@ -1,0 +1,111 @@
+package com.mobile.iexpense.core.component.theme
+
+import androidx.compose.ui.graphics.Color
+
+object ColorPalettes {
+    val LightBackgroundPrimary = Color(0xFFFDF7FF)
+    val LightBackgroundSecondary = Color(0xFFF8F2FA)
+    val LightBackgroundTertiary = Color(0xFFF2ECF4)
+    val LightBackgroundCardPrimary = Color(0xFF6750A4)
+    val LightBackgroundCardSecondary = Color(0xFFE8DEF9)
+    val LightBackgroundCardTertiary = Color(0xFF7E5260)
+    val LightBackgroundSurfaceDim = Color(0xFFDED8E0)
+    val LightBackgroundSurfaceBright = Color(0xFFFDF7FF)
+
+    val LightTextPrimary = Color(0xFF1D1B20)
+    val LightTextSecondary = Color(0xFF494551)
+    val LightTextTertiary = Color(0xFF686177)
+    val LightTextPlaceholder = Color(0xFF948F9A)
+    val LightTextColorOnTheme = Color(0xFFFFFFFF)
+    val LightTextInverse = Color(0xFFF5EFF7)
+    val LightTextCritical = Color(0xFFBA1A1A)
+    val LightTextOnTertiary = Color(0xFFFFFFFF)
+
+    val LightBorderPrimary = Color(0xFF7A7582)
+    val LightBorderSecondary = Color(0xFFCBC4D2)
+    val LightBorderTertiary = Color(0xFFECE6EE)
+    val LightBorderCritical = Color(0xFFBA1A1A)
+
+    val LightIconPrimary = Color(0xFF1D1B20)
+    val LightIconSecondary = Color(0xFF494551)
+    val LightIconTertiary = Color(0xFF625B71)
+    val LightIconCritical = Color(0xFFBA1A1A)
+    val LightIconOnTheme = Color(0xFFFFFFFF)
+    val LightIconOnTertiary = Color(0xFFFFFFFF)
+
+    val LightThemeColor = Color(0xFF4F378A)
+    val LightThemeInverse = Color(0xFFCFBCFF)
+    val LightThemeDim = Color(0xFF6750A4)
+    val LightThemeSurfaceTint = Color(0xFF6750A4)
+
+    val LightFixedPrimary = Color(0xFFE9DDFF)
+    val LightFixedPrimaryDim = Color(0xFFCFBCFF)
+    val LightFixedOnPrimary = Color(0xFF22005D)
+    val LightFixedSecondary = Color(0xFFE8DEF9)
+    val LightFixedSecondaryDim = Color(0xFFCCC2DC)
+    val LightFixedOnSecondary = Color(0xFF1E192B)
+    val LightFixedTertiary = Color(0xFFFFD9E3)
+    val LightFixedTertiaryDim = Color(0xFFEFB8C8)
+    val LightFixedOnTertiary = Color(0xFF31101D)
+
+    val LightInverseSurface = Color(0xFF322F35)
+    val LightInverseOnSurface = Color(0xFFF5EFF7)
+
+    val LightError = Color(0xFFBA1A1A)
+    val LightOnError = Color(0xFFFFFFFF)
+    val LightErrorContainer = Color(0xFFFFDAD6)
+    val LightOnErrorContainer = Color(0xFF93000A)
+
+    val DarkBackgroundPrimary = Color(0xFF141317)
+    val DarkBackgroundSecondary = Color(0xFF1C1B1F)
+    val DarkBackgroundTertiary = Color(0xFF201F23)
+    val DarkBackgroundCardPrimary = Color(0xFFD0BCFF)
+    val DarkBackgroundCardSecondary = Color(0xFF4A4359)
+    val DarkBackgroundCardTertiary = Color(0xFFEFB8C8)
+    val DarkBackgroundSurfaceDim = Color(0xFF141317)
+    val DarkBackgroundSurfaceBright = Color(0xFF3A383D)
+
+    val DarkTextPrimary = Color(0xFFE5E1E7)
+    val DarkTextSecondary = Color(0xFFCAC4D0)
+    val DarkTextTertiary = Color(0xFFBAB1CA)
+    val DarkTextPlaceholder = Color(0xFF948F9A)
+    val DarkTextColorOnTheme = Color(0xFF37265E)
+    val DarkTextInverse = Color(0xFF313034)
+    val DarkTextCritical = Color(0xFFFFB4AB)
+    val DarkTextOnTertiary = Color(0xFF492532)
+
+    val DarkBorderPrimary = Color(0xFF948F9A)
+    val DarkBorderSecondary = Color(0xFF49454F)
+    val DarkBorderTertiary = Color(0xFF2B292D)
+    val DarkBorderCritical = Color(0xFF93000A)
+
+    val DarkIconPrimary = Color(0xFFE5E1E7)
+    val DarkIconSecondary = Color(0xFFCAC4D0)
+    val DarkIconTertiary = Color(0xFFCCC2DC)
+    val DarkIconCritical = Color(0xFFFFB4AB)
+    val DarkIconOnTheme = Color(0xFF37265E)
+    val DarkIconOnTertiary = Color(0xFF492532)
+
+    val DarkThemeColor = Color(0xFFE9DDFF)
+    val DarkThemeInverse = Color(0xFF665590)
+    val DarkThemeDim = Color(0xFFD0BCFF)
+    val DarkThemeSurfaceTint = Color(0xFFD0BCFF)
+
+    val DarkFixedPrimary = Color(0xFFE9DDFF)
+    val DarkFixedPrimaryDim = Color(0xFFCFBCFF)
+    val DarkFixedOnPrimary = Color(0xFF22005D)
+    val DarkFixedSecondary = Color(0xFFE8DEF9)
+    val DarkFixedSecondaryDim = Color(0xFFCCC2DC)
+    val DarkFixedOnSecondary = Color(0xFF1E192B)
+    val DarkFixedTertiary = Color(0xFFFFD9E3)
+    val DarkFixedTertiaryDim = Color(0xFFEFB8C8)
+    val DarkFixedOnTertiary = Color(0xFF31101D)
+
+    val DarkInverseSurface = Color(0xFFE5E1E7)
+    val DarkInverseOnSurface = Color(0xFF313034)
+
+    val DarkError = Color(0xFFFFB4AB)
+    val DarkOnError = Color(0xFF690005)
+    val DarkErrorContainer = Color(0xFF93000A)
+    val DarkOnErrorContainer = Color(0xFFFFDAD6)
+}
