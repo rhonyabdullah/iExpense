@@ -47,9 +47,9 @@ When downloading assets (screenshots, HTML code, images, or any other hosted fil
 ```
 ┌─────────────────────────────────────────────┐
 │           Presentation Layer                │
-│  Store ──> StateFlow<State>                 │
+│  ViewModel ──> StateFlow<State>             │
 │  dispatch(Intent)                           │
-│  SharedFlow<Effect> (one-shot side effects)  │
+│  SharedFlow<Effect> (one-shot side effects) │
 ├─────────────────────────────────────────────┤
 │           Domain Layer                      │
 │  Use Cases  ──>  Repository Interfaces      │
@@ -66,11 +66,11 @@ When downloading assets (screenshots, HTML code, images, or any other hosted fil
 
 ### Key Layers
 
-(All paths are relative to `composeApp/src/commonMain/kotlin/com/example/`)
+(All paths are relative to `composeApp/src/commonMain/kotlin/com/mobile/iexpense/`)
 
 | Layer | Location | Description |
 |-------|----------|-------------|
-| **Presentation** | `feature/*/` | MVI Stores, State, Intent, Effect |
+| **Presentation** | `feature/*/` | MVI ViewModels, State, Intent, Effect |
 | **Domain** | `core/domain/` | Pure models, repository interfaces, use cases. Zero external dependencies. |
 | **Data** | `core/data/` | Repository implementations, mappers, paging sources. |
 | **Database** | `core/database/` | Room entities, DAOs, local data sources. |
@@ -84,7 +84,7 @@ Follow these naming conventions to maintain consistency:
 
 | Component | Convention | Example |
 |-----------|-----------|---------|
-| **Store** | `{Feature}Store.kt` / `{Feature}ViewModel.kt` | `HomeStore.kt`, `AddExpenseViewModel`, `AuthStore.kt` |
+| **ViewModel** | `{Feature}ViewModel.kt` | `HomeViewModel.kt`, `AddExpenseViewModel.kt`, `AuthViewModel.kt` |
 | **State** | `{Feature}State.kt` (data class) | `HomeState.kt`, `LoginState.kt` |
 | **Intent** | `{Feature}Intent.kt` (sealed interface) | `AddExpenseIntent.kt` |
 | **Effect** | `{Feature}Effect.kt` (sealed interface extending `UiEffect`) | `AuthEffect.kt` |
@@ -102,16 +102,16 @@ Follow these naming conventions to maintain consistency:
 The application uses **MVI** with a **Unidirectional Data Flow (UDF)** pattern:
 
 1. **State**: A single `data class` representing the entire screen state. Exposed as `StateFlow<State>`.
-2. **Intent**: A `sealed interface` for all user actions. The UI calls `store.dispatch(intent)`/`viewModel.dispatch(intent)`.
+2. **Intent**: A `sealed interface` for all user actions. The UI calls `viewModel.dispatch(intent)`.
 3. **Effect**: A `sealed interface` extending `UiEffect` for one-shot side effects (navigation, toasts). Emitted via a `Channel` and collected via `LaunchedEffect`.
-4. **Store / ViewModel**: Extends `BaseViewModel`, holds `MutableStateFlow<State>` and a `Channel<Effect>`, exposes `StateFlow<State>` and `Flow<Effect>`, and implements `dispatch(intent)`.
+4. **ViewModel**: Extends `BaseViewModel`, holds `MutableStateFlow<State>` and a `Channel<Effect>`, exposes `StateFlow<State>` and `Flow<Effect>`, and implements `dispatch(intent)`.
 5. **EffectHandler**: Extends `BaseEffectHandler<Effect>` and bridges effects to Compose-only APIs (navigation, toasts). Kept outside the ViewModel for KMP portability.
 6. **Screen Structure**: Every screen uses a **Route → Screen → Content** three-layer composable structure.
 
 ### UiEffect Marker Interface
 
 ```kotlin
-// common/presentation/effect/UiEffect.kt
+// core/common/effect/UiEffect.kt
 interface UiEffect
 ```
 
@@ -301,13 +301,13 @@ sealed interface EntityCategory {
 
 ## Dependency Injection (Koin)
 
-Modules are defined in `composeApp/src/commonMain/kotlin/com/example/di/KoinModules.kt`.
+Modules are defined in `composeApp/src/commonMain/kotlin/com/mobile/iexpense/di/KoinModules.kt`.
 
 ### Registration Quick Reference
 
 | Component | Registration | Module |
 |-----------|-------------|--------|
-| Store | `viewModelOf(::MyStore)` | `presentationModule` |
+| ViewModel | `viewModelOf(::MyViewModel)` | `presentationModule` |
 | Use Case | `singleOf(::MyUseCase)` | `useCaseModule` |
 | Repository Impl | `singleOf(::MyRepoImpl) bind MyRepo::class` | `repositoryModule` |
 | Database DataSource | `singleOf(::MyDbDataSource)` | `databaseModule` |
@@ -329,7 +329,7 @@ val sharedModule = module {
 
 To maintain Clean Architecture, follow these rules:
 
-- **Presentation → Domain**: Stores interact only with **Use Cases** (not Repositories).
+- **Presentation → Domain**: ViewModels interact only with **Use Cases** (not Repositories).
 - **Domain → Data**: Domain defines **Repository Interfaces**. Data implements them.
 - **Data → Domain**: All data from Network/Database MUST be mapped to **Domain Models** before reaching Domain/Presentation.
 - **Dependency Rule**: Dependencies point inwards. `Domain` has no dependencies on other layers.
@@ -354,14 +354,14 @@ To maintain Clean Architecture, follow these rules:
 When generating or syncing design tokens to the codebase, produce files in this structure (per [`DESIGN.md`](DESIGN.md) §13):
 
 ```text
-composeApp/src/commonMain/kotlin/com/example/core/component/theme/
+composeApp/src/commonMain/kotlin/com/mobile/iexpense/core/component/theme/
 ├── ColorPalettes.kt          ← Raw hex constants (~150 colors)
 ├── CustomThemeColors.kt      ← Semantic data class + createTheme()
 ├── AppTypography.kt          ← Typography data class with Poppins
 ├── Dimens.kt                 ← Spacing, radius, icon, button tokens
 └── Theme.kt                  ← AppTheme composable + LocalCustomColors / LocalAppTypography
 
-composeApp/src/commonMain/kotlin/com/example/core/component/
+composeApp/src/commonMain/kotlin/com/mobile/iexpense/core/component/
 ├── button/
 │   ├── AppButton.kt
 │   └── AppButtonConfig.kt
@@ -500,7 +500,7 @@ Quick checklist:
 [ ] State                  feature/{feature}/{Feature}State.kt
 [ ] Intent                 feature/{feature}/{Feature}Intent.kt
 [ ] Effect                 feature/{feature}/{Feature}Effect.kt (if needed)
-[ ] Store                  feature/{feature}/{Feature}Store.kt
+[ ] ViewModel              feature/{feature}/{Feature}ViewModel.kt
 [ ] Koin Registration      di/KoinModules.kt
 ```
 
@@ -529,7 +529,7 @@ Quick checklist:
 | [data-layer.md](./architecture/data-layer.md) | 5 repository patterns, networkBoundResource, mappers, RemoteMediator, PagingSource |
 | [database-layer.md](./architecture/database-layer.md) | Room entities, DAOs, data sources, TypeConverter, transaction provider |
 | [network-layer.md](./architecture/network-layer.md) | Ktor setup, safeApiCall, API services, network data sources |
-| [presentation-layer.md](./architecture/presentation-layer.md) | MVI Stores, State, Intent, Effect, reducer pattern |
+| [presentation-layer.md](./architecture/presentation-layer.md) | MVI ViewModels, State, Intent, Effect, reducer pattern |
 | [dependency-injection.md](./architecture/dependency-injection.md) | Koin module structure, registration patterns |
 | [new-feature-cheatsheet.md](./architecture/new-feature-cheatsheet.md) | Step-by-step scaffold for new features |
 
