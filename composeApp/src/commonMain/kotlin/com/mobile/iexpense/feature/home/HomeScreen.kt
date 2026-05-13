@@ -5,11 +5,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
@@ -36,14 +41,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.border
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
-import com.mobile.iexpense.core.component.overlay.AppLoadingOverlay
+import com.mobile.iexpense.core.component.shimmer.ShimmerBox
 import com.mobile.iexpense.core.component.theme.AppTheme
 import com.mobile.iexpense.core.component.theme.DesignSystem
 import iexpense.composeapp.generated.resources.Res
@@ -183,11 +187,18 @@ internal fun HomeScreen(
                 }
             }
         ) { innerPadding ->
-            EmptyStateContent(
-                modifier = Modifier.padding(innerPadding)
-            )
+            when {
+                state.isLoading -> LoadingStateContent(
+                    modifier = Modifier.padding(innerPadding)
+                )
+                state.expenses.isEmpty() -> EmptyStateContent(
+                    modifier = Modifier.padding(innerPadding)
+                )
+                else -> Box(modifier = Modifier.padding(innerPadding)) {
+                    // TODO: populated list content
+                }
+            }
         }
-        AppLoadingOverlay(visible = state.isLoading)
     }
 }
 
@@ -251,6 +262,112 @@ private fun EmptyStateContent(
     }
 }
 
+@Composable
+private fun LoadingStateContent(
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = DesignSystem.dimens.spacingMd),
+        verticalArrangement = Arrangement.spacedBy(DesignSystem.dimens.spacingMd)
+    ) {
+        Spacer(modifier = Modifier.height(DesignSystem.dimens.spacingSm))
+
+        ShimmerBox(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(140.dp),
+            shape = RoundedCornerShape(DesignSystem.dimens.radiusMd)
+        ) {
+            Column(modifier = Modifier.padding(DesignSystem.dimens.spacingMd)) {
+                ShimmerBox(
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(20.dp),
+                    shape = RoundedCornerShape(4.dp)
+                )
+                Spacer(modifier = Modifier.height(DesignSystem.dimens.spacingSm))
+                ShimmerBox(
+                    modifier = Modifier
+                        .width(180.dp)
+                        .height(36.dp),
+                    shape = RoundedCornerShape(4.dp)
+                )
+                Spacer(modifier = Modifier.height(DesignSystem.dimens.spacingMd))
+                Row(horizontalArrangement = Arrangement.spacedBy(DesignSystem.dimens.spacingMd)) {
+                    ShimmerBox(
+                        modifier = Modifier
+                            .width(90.dp)
+                            .height(16.dp),
+                        shape = RoundedCornerShape(4.dp)
+                    )
+                    ShimmerBox(
+                        modifier = Modifier
+                            .width(90.dp)
+                            .height(16.dp),
+                        shape = RoundedCornerShape(4.dp)
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(DesignSystem.dimens.spacingXs))
+
+        ShimmerBox(
+            modifier = Modifier
+                .width(140.dp)
+                .height(22.dp),
+            shape = RoundedCornerShape(4.dp)
+        )
+
+        repeat(4) {
+            TransactionSkeletonItem()
+        }
+    }
+}
+
+@Composable
+private fun TransactionSkeletonItem() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(72.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(DesignSystem.dimens.spacingMd)
+        ) {
+            ShimmerBox(
+                modifier = Modifier.size(40.dp),
+                shape = CircleShape
+            )
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                ShimmerBox(
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(18.dp),
+                    shape = RoundedCornerShape(4.dp)
+                )
+                ShimmerBox(
+                    modifier = Modifier
+                        .width(80.dp)
+                        .height(14.dp),
+                    shape = RoundedCornerShape(4.dp)
+                )
+            }
+        }
+        ShimmerBox(
+            modifier = Modifier
+                .width(64.dp)
+                .height(18.dp),
+            shape = RoundedCornerShape(4.dp)
+        )
+    }
+}
+
 @Preview
 @Composable
 private fun HomeScreenPreview() {
@@ -267,6 +384,16 @@ private fun HomeScreenPreview() {
 private fun EmptyStateContentPreview() {
     AppTheme {
         EmptyStateContent(
+            modifier = Modifier.background(DesignSystem.colors.backgroundPrimary)
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun LoadingStateContentPreview() {
+    AppTheme {
+        LoadingStateContent(
             modifier = Modifier.background(DesignSystem.colors.backgroundPrimary)
         )
     }
