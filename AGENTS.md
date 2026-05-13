@@ -102,9 +102,9 @@ Follow these naming conventions to maintain consistency:
 The application uses **MVI** with a **Unidirectional Data Flow (UDF)** pattern:
 
 1. **State**: A single `data class` representing the entire screen state. Exposed as `StateFlow<State>`.
-2. **Intent**: A `sealed interface` for all user actions. The UI calls `viewModel.dispatch(intent)`.
+2. **Intent**: A `sealed interface` for all user actions. The UI calls `viewModel.dispatch(intent)`. **Never use `onIntent` in ViewModel.**
 3. **Effect**: A `sealed interface` extending `UiEffect` for one-shot side effects (navigation, toasts). Emitted via a `Channel` and collected via `LaunchedEffect`.
-4. **ViewModel**: Extends `BaseViewModel`, holds `MutableStateFlow<State>` and a `Channel<Effect>`, exposes `StateFlow<State>` and `Flow<Effect>`, and implements `dispatch(intent)`.
+4. **ViewModel**: Extends `BaseViewModel`, holds `MutableStateFlow<State>` and a `Channel<Effect>`, exposes `StateFlow<State>` and `Flow<Effect>`, and implements `dispatch(intent)`. ViewModels should be `internal class`.
 5. **EffectHandler**: Extends `BaseEffectHandler<Effect>` and bridges effects to Compose-only APIs (navigation, toasts). Kept outside the ViewModel for KMP portability.
 6. **Screen Structure**: Every screen uses a **Route → Screen → Content** three-layer composable structure.
 
@@ -141,7 +141,7 @@ class {Feature}ViewModel(
     private val _state = MutableStateFlow({Feature}State())
     val state: StateFlow<{Feature}State> = _state.asStateFlow()
 
-    private val _effect = Channel<{Feature}Effect>(Channel.BUFFERED)
+    private val _effect = EffectChannel<{Feature}Effect>()
     val effect: Flow<{Feature}Effect> = _effect.receiveAsFlow()
 
     init { dispatch({Feature}Intent.OnInit) }
@@ -247,9 +247,28 @@ sealed interface Navigation : NavKey {
 }
 ```
 
-Registration in `App.kt`:
+#### Serialization Setup
+
+Every key must be registered in a `SavedStateConfiguration`:
 
 ```kotlin
+val navigationConfig = SavedStateConfiguration {
+    serializersModule = SerializersModule {
+        polymorphic(NavKey::class, Navigation::class, Navigation.serializer())
+        polymorphic(NavKey::class, Navigation.Home::class, Navigation.Home.serializer())
+        polymorphic(NavKey::class, Navigation.Otp::class, Navigation.Otp.serializer())
+    }
+}
+```
+
+#### Registration in `App.kt`
+
+```kotlin
+val navBackStack = rememberNavBackStack(
+    configuration = navigationConfig,
+    startKey = Navigation.Home
+)
+
 NavDisplay(
     backStack = navBackStack,
     entryDecorators = listOf(
@@ -262,6 +281,8 @@ NavDisplay(
     }
 )
 ```
+
+> For details on operations like `replace()` or `replaceAll()`, see [`navigation.md`](./architecture/ui/navigation.md).
 
 ### State Collection Rules
 
@@ -348,6 +369,19 @@ val sharedModule = module {
 
 ---
 
+## Room KMP Setup
+
+The project uses Room for Kotlin Multiplatform. Strictly follow these rules to avoid build failures:
+
+- **The `room-ktx` Trap**: **Never** add `room-ktx` to the project. It is not KMP-compatible. Use `room-runtime` (KMP) which has built-in Coroutines/Flow support.
+- **iOS Driver**: Use `sqlite-bundled` for the iOS driver; Android uses the platform-native driver.
+- **KSP Registration**: Register the Room compiler KSP dependency for **every** compilation target (Android and all iOS architectures).
+- **Schema Export**: Configure `room { schemaDirectory(...) }` in the Gradle file.
+
+For full technical setup details, see [`room-kmp-setup.md`](./architecture/room-kmp-setup.md).
+
+---
+
 ## Layer Interaction & Rules
 
 To maintain Clean Architecture, follow these rules:
@@ -394,8 +428,9 @@ composeApp/src/commonMain/kotlin/com/mobile/iexpense/core/component/
 │   ├── AppPasswordTextField.kt
 │   └── AppPasswordTextFieldConfig.kt
 ├── header/
-│   ├── AppHeaderPage.kt
-│   └── AppCenterHeaderPage.kt
+│   ├── AppHeaderPage.kt      ← Left-aligned with back button
+│   ├── AppCenterHeaderPage.kt ← Center-aligned, no back button
+│   └── ...
 ├── overlay/
 │   └── AppLoadingOverlay.kt
 ├── toast/
@@ -554,6 +589,7 @@ Quick checklist:
 | [network-layer.md](./architecture/network-layer.md) | Ktor setup, safeApiCall, API services, network data sources |
 | [presentation-layer.md](./architecture/presentation-layer.md) | MVI ViewModels, State, Intent, Effect, reducer pattern |
 | [dependency-injection.md](./architecture/dependency-injection.md) | Koin module structure, registration patterns |
+| [room-kmp-setup.md](./architecture/room-kmp-setup.md) | **Room KMP setup** — Gradle configuration, KSP registration, and the `room-ktx` trap |
 | [new-feature-cheatsheet.md](./architecture/new-feature-cheatsheet.md) | Step-by-step scaffold for new features |
 
 ---
@@ -565,6 +601,7 @@ These documents cover Presentation layer implementation details, Compose pattern
 | Document | Content |
 |----------|---------|
 | **[`DESIGN.md`](DESIGN.md)** | **Primary design spec** — colors, typography, spacing, shape tokens, component specs, and do's/don'ts |
+| [navigation.md](./architecture/ui/navigation.md) | **Navigation3 architecture** — typed keys, serialization, backstack operations, MVI flow |
 | [screen-state-collection.md](./architecture/ui/screen-state-collection.md) | `collectAsStateWithLifecycle` usage, state hoisting, lifecycle awareness |
 | [event-dispatching.md](./architecture/ui/event-dispatching.md) | Intent dispatching, Effect handling, MVI unidirectional flow in Compose |
 | [loading-error-content-states.md](./architecture/ui/loading-error-content-states.md) | Loading shimmer, error placeholders, empty states, content flip |
