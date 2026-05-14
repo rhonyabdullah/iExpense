@@ -1,3 +1,4 @@
 [submodule "architecture"]
 	path = architecture
 	url = git@github.com:rhonyabdullah/cmp-mobile-architecture.git
+    ignore = all
