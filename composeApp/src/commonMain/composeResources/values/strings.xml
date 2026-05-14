@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
     <string name="unknown_error">Something went wrong. Please try again.</string>
+
+    <!-- Add Expense Screen -->
+    <string name="add_expense_title">Add Expense</string>
+    <string name="add_expense_back">Back</string>
+    <string name="add_expense_field_title">Expense Title</string>
+    <string name="add_expense_field_title_placeholder">e.g., Lunch with Client</string>
+    <string name="add_expense_field_amount">Amount</string>
+    <string name="add_expense_field_amount_placeholder">0.00</string>
+    <string name="add_expense_field_date">Date</string>
+    <string name="add_expense_field_date_select">Select date</string>
+    <string name="add_expense_field_category">Category</string>
+    <string name="add_expense_field_notes">Notes (Optional)</string>
+    <string name="add_expense_field_notes_placeholder">Add some notes...</string>
+    <string name="add_expense_button_cancel">Cancel</string>
+    <string name="add_expense_button_save">Save Expense</string>
+    <string name="add_expense_error_title_required">Title is required</string>
+    <string name="add_expense_error_amount_invalid">Enter a valid positive amount</string>
+    <string name="add_expense_error_date_invalid">Invalid date</string>
+    <string name="add_expense_toast_saved">Expense saved!</string>
 </resources>
