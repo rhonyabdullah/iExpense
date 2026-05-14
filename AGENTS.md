@@ -405,6 +405,8 @@ To maintain Clean Architecture, follow these rules:
 > **Theming Implementation**: If your project supports dynamic accent switching, see [`architecture/ui/theming-dynamic.md`](./architecture/ui/theming-dynamic.md). For a single static theme, see [`architecture/ui/theming-static.md`](./architecture/ui/theming-static.md).
 >
 > **Token System**: Semantic tokens (`backgroundPrimary`, `textPrimary`, `heading3xl`, `spacingLg`, `radiusMd`, etc.) are consumed via `DesignSystem.colors` and `DesignSystem.typography`. Never hardcode hex or `dp` values in screen code.
+>
+> **String Resources**: Every user-facing text — including labels, placeholders, `contentDescription`, error messages, and toast text — must use `stringResource(Res.string.*)`. Never hardcode English strings in composables, ViewModels, or EffectHandlers. All strings must be defined in `composeResources/values/strings.xml` (and mirrored in locale-specific variants).
 
 ### Design System File Architecture
 
