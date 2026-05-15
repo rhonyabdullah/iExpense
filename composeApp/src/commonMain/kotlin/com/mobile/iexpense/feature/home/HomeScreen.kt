@@ -23,13 +23,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation3.runtime.NavBackStack
-import androidx.navigation3.runtime.NavKey
 import com.mobile.iexpense.core.component.theme.AppTheme
 import com.mobile.iexpense.core.component.theme.DesignSystem
 import com.mobile.iexpense.feature.home.components.EmptyStateContent
@@ -41,34 +36,7 @@ import iexpense.composeapp.generated.resources.home_nav_home
 import iexpense.composeapp.generated.resources.home_nav_summary
 import iexpense.composeapp.generated.resources.home_search
 import iexpense.composeapp.generated.resources.home_title
-import iexpense.composeapp.generated.resources.unknown_error
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.koinInject
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
-
-@Composable
-fun HomeRoute(backStack: NavBackStack<NavKey>) {
-    val unknownErrorMessage = stringResource(Res.string.unknown_error)
-    val viewModel: HomeViewModel = koinViewModel()
-    val effectHandler: HomeEffectHandler = koinInject {
-        parametersOf(backStack, unknownErrorMessage)
-    }
-    val state by viewModel.state.collectAsStateWithLifecycle()
-
-    LaunchedEffect(viewModel.effect) {
-        viewModel.effect.collect(effectHandler::handleEffect)
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.dispatch(HomeIntent.OnInit)
-    }
-
-    HomeScreen(
-        state = state,
-        onIntent = viewModel::dispatch
-    )
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
