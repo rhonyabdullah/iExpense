@@ -171,17 +171,35 @@ On Windows:
 
 Comprehensive architecture and pattern documentation is available under the [`architecture/`](architecture/) directory:
 
+### Core Architecture
+
 | Document | Content |
 |----------|---------|
-| [`domain-layer.md`](architecture/domain-layer.md) | Domain models, repository interfaces, use cases, AppResult |
-| [`data-layer.md`](architecture/data-layer.md) | Repository patterns, mappers, RemoteMediator, PagingSource |
-| [`database-layer.md`](architecture/database-layer.md) | Room entities, DAOs, data sources, TypeConverter |
-| [`network-layer.md`](architecture/network-layer.md) | Ktor setup, API services, network data sources |
-| [`presentation-layer.md`](architecture/presentation-layer.md) | MVI ViewModels, State, Intent, Effect, reducer pattern |
-| [`dependency-injection.md`](architecture/dependency-injection.md) | Koin module structure and registration patterns |
-| [`new-feature-cheatsheet.md`](architecture/new-feature-cheatsheet.md) | Step-by-step scaffold for adding new features |
+| [`domain-layer.md`](architecture/domain-layer.md) | Domain models, repository interfaces, use cases, `AppResult`, `EntityCategory` |
+| [`data-layer.md`](architecture/data-layer.md) | Repository patterns, mappers, `RemoteMediator`, `PagingSource` |
+| [`database-layer.md`](architecture/database-layer.md) | Room entities, DAOs, data sources, `TypeConverter`, transaction provider |
+| [`network-layer.md`](architecture/network-layer.md) | Ktor client setup, `safeApiCall`, API services, network data sources |
+| [`presentation-layer.md`](architecture/presentation-layer.md) | MVI ViewModels, `State`, `Intent`, `Effect`, reducer pattern, `BaseViewModel` |
+| [`dependency-injection.md`](architecture/dependency-injection.md) | Koin module structure, component registration patterns |
+| [`room-kmp-setup.md`](architecture/room-kmp-setup.md) | Room KMP Gradle configuration, KSP registration, bundled SQLite driver |
+| [`new-feature-cheatsheet.md`](architecture/new-feature-cheatsheet.md) | Step-by-step scaffold for adding new features from domain to UI |
 
-UI-specific documentation resides under [`architecture/ui/`](architecture/ui/), covering navigation, screen architecture, state collection, event dispatching, paging integration, theming, and more.
+### UI & Presentation Patterns
+
+| Document | Content |
+|----------|---------|
+| [`navigation.md`](architecture/ui/navigation.md) | Navigation3 typed keys, `NavKey` serialization, backstack operations |
+| [`screen-architecture.md`](architecture/ui/screen-architecture.md) | Route → Screen → Content three-layer composable structure |
+| [`screen-state-collection.md`](architecture/ui/screen-state-collection.md) | `collectAsStateWithLifecycle` usage, state hoisting, lifecycle awareness |
+| [`event-dispatching.md`](architecture/ui/event-dispatching.md) | Intent dispatching, Effect handling, MVI unidirectional flow |
+| [`loading-error-content-states.md`](architecture/ui/loading-error-content-states.md) | Loading shimmer, error placeholders, empty states, content flip |
+| [`paging-integration.md`](architecture/ui/paging-integration.md) | Paging integration with Compose `LazyList`, load states |
+| [`reusable-ui-patterns.md`](architecture/ui/reusable-ui-patterns.md) | Design system, reusable components, resource management |
+| [`theming-dynamic.md`](architecture/ui/theming-dynamic.md) | Dynamic accent theming with `ThemeManager` and runtime switching |
+| [`theming-static.md`](architecture/ui/theming-static.md) | Single static theme (light/dark only) |
+| [`ui-cheatsheet.md`](architecture/ui/ui-cheatsheet.md) | Quick-reference for scaffolding screens, components, and themes |
+| [`testing-patterns.md`](architecture/ui/testing-patterns.md) | UI layer testing, test utilities, current coverage strategy |
+| [`edge-cases.md`](architecture/ui/edge-cases.md) | Edge-case handling, advanced patterns, `BaseViewModel` hardening |
 
 ---
 
