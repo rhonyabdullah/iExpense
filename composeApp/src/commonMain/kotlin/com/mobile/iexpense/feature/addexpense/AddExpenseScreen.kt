@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mobile.iexpense.core.common.currentTimeMillis
+import androidx.compose.ui.text.input.KeyboardType
 import com.mobile.iexpense.core.component.button.AppButton
 import com.mobile.iexpense.core.component.button.AppButtonConfig
 import com.mobile.iexpense.core.component.modifier.clearFocusOnTap
@@ -138,7 +139,8 @@ internal fun AddExpenseContent(
                             color = DesignSystem.colors.textSecondary,
                             modifier = Modifier.padding(start = DesignSystem.dimens.spacingXs)
                         )
-                    }
+                    },
+                    keyboardType = KeyboardType.Number
                 ),
                 modifier = Modifier.fillMaxWidth()
             )

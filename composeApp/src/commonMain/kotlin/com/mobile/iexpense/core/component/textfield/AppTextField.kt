@@ -31,7 +31,7 @@ fun AppTextField(
             textStyle = DesignSystem.typography.bodyMd.copy(
                 color = if (config.isError) DesignSystem.colors.textCritical else DesignSystem.colors.textPrimary
             ),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+            keyboardOptions = KeyboardOptions(keyboardType = config.keyboardType),
             singleLine = true,
             cursorBrush = SolidColor(DesignSystem.colors.themeColor),
             modifier = Modifier

@@ -1,6 +1,7 @@
 package com.mobile.iexpense.core.component.textfield
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.input.KeyboardType
 
 data class AppTextFieldConfig(
     val value: String,
@@ -12,5 +13,6 @@ data class AppTextFieldConfig(
     val enabled: Boolean = true,
     val readOnly: Boolean = false,
     val leadingIcon: @Composable (() -> Unit)? = null,
-    val trailingIcon: @Composable (() -> Unit)? = null
+    val trailingIcon: @Composable (() -> Unit)? = null,
+    val keyboardType: KeyboardType = KeyboardType.Text
 )
