@@ -1,15 +1,15 @@
-# iExpense — Personal Finance Tracker
+# iExpense - Personal Finance Tracker
 
 A modern personal finance tracking application built with **Kotlin Multiplatform** and **Compose Multiplatform**, targeting **Android** and **iOS**. iExpense enables users to log daily expenses, categorise spending, and monitor monthly totals through a clean, intuitive interface.
 
 ## Features
 
-- **Expense Tracking** — Log expenses with title, amount, date, category, and optional notes
-- **Category Management** — Organise spending across six categories: Food, Transport, Utilities, Entertainment, Health, and Shopping
-- **Monthly Summary** — View total spending for the current month at a glance
-- **Date Grouping** — Transactions organised under relative date headers (Today, Yesterday, or formatted dates)
-- **Dark Mode** — Full light and dark theme support via the design system
-- **Offline-First** — All data persisted locally with Room; fully functional without network connectivity
+- **Expense Tracking** - Log expenses with title, amount, date, category, and optional notes
+- **Category Management** - Organise spending across six categories: Food, Transport, Utilities, Entertainment, Health, and Shopping
+- **Monthly Summary** - View total spending for the current month at a glance
+- **Date Grouping** - Transactions organised under relative date headers (Today, Yesterday, or formatted dates)
+- **Dark Mode** - Full light and dark theme support via the design system
+- **Offline-First** - All data persisted locally with Room; fully functional without network connectivity
 
 ## Tech Stack
 
@@ -64,7 +64,7 @@ graph TD
 | Layer | Location | Description |
 |-------|----------|-------------|
 | **Presentation** | `feature/**/` | MVI ViewModels, State, Intent, Effect, EffectHandler |
-| **Domain** | `core/domain/` | Domain models, repository interfaces, use cases — zero external dependencies |
+| **Domain** | `core/domain/` | Domain models, repository interfaces, use cases - zero external dependencies |
 | **Data** | `core/data/` | Repository implementations, mappers |
 | **Database** | `core/database/` | Room entities, DAOs, data sources |
 | **Network** | `core/network/` | Ktor client, API services, DTOs |
@@ -77,26 +77,26 @@ Every screen follows a three-layer composable structure:
 Route → Screen → Content
 ```
 
-- **Route** — Handles dependency injection, lifecycle wiring, effect collection, and initial intent dispatch
-- **Screen** — Stateless composable receiving only `State` and `onIntent` callback
-- **Content** — Pure UI arranged within a `Scaffold`
+- **Route** - Handles dependency injection, lifecycle wiring, effect collection, and initial intent dispatch
+- **Screen** - Stateless composable receiving only `State` and `onIntent` callback
+- **Content** - Pure UI arranged within a `Scaffold`
 
 ### State Management
 
-- **State** — Single `data class` representing the entire screen state, exposed as `StateFlow<State>`
-- **Intent** — `sealed interface` for all user actions, dispatched via `viewModel.dispatch(intent)`
-- **Effect** — `sealed interface` extending `UiEffect` for one-shot side effects (navigation, error toasts), emitted through a `Channel`
+- **State** - Single `data class` representing the entire screen state, exposed as `StateFlow<State>`
+- **Intent** - `sealed interface` for all user actions, dispatched via `viewModel.dispatch(intent)`
+- **Effect** - `sealed interface` extending `UiEffect` for one-shot side effects (navigation, error toasts), emitted through a `Channel`
 
 ## Design System
 
 The project includes a comprehensive design system with:
 
-- **Typography** — 28 named tokens across Headings, Titles, Body, and Component styles; Poppins font family
-- **Colours** — Semantic colour tokens for Background, Text, Border, Icon, and Accent roles; primary purple palette
-- **Spacing** — 8-stop scale from `spacingXs` (4dp) through `spacing4xl` (64dp)
-- **Radius** — 6-stop scale from `radiusXs` (4dp) through `radiusFull`
-- **Components** — Reusable `AppButton`, `AppTextField`, `AppLoadingOverlay`, `AppToast`, `ShimmerBox`, and more
-- **Accessibility** — All text-on-background pairings meet WCAG AA standards
+- **Typography** - 28 named tokens across Headings, Titles, Body, and Component styles; Poppins font family
+- **Colours** - Semantic colour tokens for Background, Text, Border, Icon, and Accent roles; primary purple palette
+- **Spacing** - 8-stop scale from `spacingXs` (4dp) through `spacing4xl` (64dp)
+- **Radius** - 6-stop scale from `radiusXs` (4dp) through `radiusFull`
+- **Components** - Reusable `AppButton`, `AppTextField`, `AppLoadingOverlay`, `AppToast`, `ShimmerBox`, and more
+- **Accessibility** - All text-on-background pairings meet WCAG AA standards
 
 For detailed specifications, see [`DESIGN.md`](DESIGN.md).
 
