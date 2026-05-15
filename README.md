@@ -12,6 +12,30 @@ This is a Kotlin Multiplatform project targeting Android, iOS.
 * [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
   you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
 
+## Architecture
+
+This project follows **Clean Architecture** with **MVI (Model-View-Intent)** in the Presentation layer.
+
+```text
+┌─────────────────────────────────────────────┐
+│           Presentation Layer                │
+│  ViewModel ──> StateFlow<State>             │
+│  dispatch(Intent)                           │
+│  SharedFlow<Effect> (one-shot side effects) │
+├─────────────────────────────────────────────┤
+│           Domain Layer                      │
+│  Use Cases  ──>  Repository Interfaces      │
+│  Domain Models, EntityCategory              │
+├─────────────────────────────────────────────┤
+│           Data Layer                        │
+│  Repository Implementations                 │
+│  Mappers, RemoteMediator, PagingSource      │
+├──────────────────┬──────────────────────────┤
+│  Database Layer  │    Network Layer         │
+│  (Room SSOT)     │    (Ktor HTTP Client)    │
+└──────────────────┴──────────────────────────┘
+```
+
 ### Build and Run Android Application
 
 To build and run the development version of the Android app, use the run configuration from the run widget
