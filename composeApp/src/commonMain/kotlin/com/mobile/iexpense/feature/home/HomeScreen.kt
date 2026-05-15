@@ -29,9 +29,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.mobile.iexpense.core.component.theme.AppTheme
 import com.mobile.iexpense.core.component.theme.DesignSystem
+import com.mobile.iexpense.core.domain.model.EntityCategory
 import com.mobile.iexpense.feature.home.components.DateHeader
 import com.mobile.iexpense.feature.home.components.EmptyStateContent
 import com.mobile.iexpense.feature.home.components.LoadingStateContent
@@ -199,10 +199,10 @@ private fun HomeScreenPreview() {
         HomeScreen(
             state = HomeState(
                 expenses = listOf(
-                    ExpenseUi("1", "Starbucks", 5.50, "Food", "Today"),
-                    ExpenseUi("2", "Uber", 18.20, "Transport", "Today"),
-                    ExpenseUi("3", "Whole Foods", 142.80, "Groceries", "Yesterday"),
-                    ExpenseUi("4", "AMC Theatres", 32.00, "Entertainment", "Yesterday")
+                    ExpenseUi("1", "Starbucks", 5.50, EntityCategory.ExpenseCategory.FOOD, "Today"),
+                    ExpenseUi("2", "Uber", 18.20, EntityCategory.ExpenseCategory.TRANSPORT, "Today"),
+                    ExpenseUi("3", "Whole Foods", 142.80, EntityCategory.ExpenseCategory.SHOPPING, "Yesterday"),
+                    ExpenseUi("4", "AMC Theatres", 32.00, EntityCategory.ExpenseCategory.ENTERTAINMENT, "Yesterday")
                 ),
                 totalThisMonth = 1250.00
             ),

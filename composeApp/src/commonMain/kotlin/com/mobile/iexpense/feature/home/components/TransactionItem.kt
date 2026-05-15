@@ -156,7 +156,7 @@ internal fun TransactionItemPreview() {
                     id = "1",
                     title = "Starbucks",
                     amount = 5.50,
-                    category = "Food",
+                    category = EntityCategory.ExpenseCategory.FOOD,
                     date = "Today"
                 )
             )
@@ -165,7 +165,7 @@ internal fun TransactionItemPreview() {
                     id = "2",
                     title = "Uber",
                     amount = 18.20,
-                    category = "Transport",
+                    category = EntityCategory.ExpenseCategory.TRANSPORT,
                     date = "Today"
                 )
             )
@@ -174,7 +174,7 @@ internal fun TransactionItemPreview() {
                     id = "3",
                     title = "Whole Foods",
                     amount = 142.80,
-                    category = "Groceries",
+                    category = EntityCategory.ExpenseCategory.SHOPPING,
                     date = "Yesterday"
                 )
             )
