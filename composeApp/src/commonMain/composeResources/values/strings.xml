@@ -20,4 +20,15 @@
     <string name="add_expense_error_amount_invalid">Enter a valid positive amount</string>
     <string name="add_expense_error_date_invalid">Invalid date</string>
     <string name="add_expense_toast_saved">Expense saved!</string>
+
+    <!-- Home Screen -->
+    <string name="home_title">iExpense</string>
+    <string name="home_menu">Menu</string>
+    <string name="home_search">Search</string>
+    <string name="home_add_expense">Add expense</string>
+    <string name="home_nav_home">Home</string>
+    <string name="home_nav_summary">Summary</string>
+    <string name="home_empty_state_title">No expenses yet</string>
+    <string name="home_empty_state_subtitle">Tap + to add one!</string>
+    <string name="home_empty_state_description">A clean, modern 3D illustration of a credit card and a floating receipt.</string>
 </resources>
