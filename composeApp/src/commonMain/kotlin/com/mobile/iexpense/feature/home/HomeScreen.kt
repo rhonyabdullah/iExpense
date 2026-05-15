@@ -1,20 +1,10 @@
 package com.mobile.iexpense.feature.home
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
@@ -33,30 +23,28 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.border
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
-import com.mobile.iexpense.core.component.shimmer.ShimmerBox
 import com.mobile.iexpense.core.component.theme.AppTheme
 import com.mobile.iexpense.core.component.theme.DesignSystem
+import com.mobile.iexpense.feature.home.components.EmptyStateContent
+import com.mobile.iexpense.feature.home.components.LoadingStateContent
 import iexpense.composeapp.generated.resources.Res
-import iexpense.composeapp.generated.resources.empty_state_illustration
+import iexpense.composeapp.generated.resources.home_add_expense
+import iexpense.composeapp.generated.resources.home_menu
+import iexpense.composeapp.generated.resources.home_nav_home
+import iexpense.composeapp.generated.resources.home_nav_summary
+import iexpense.composeapp.generated.resources.home_search
+import iexpense.composeapp.generated.resources.home_title
 import iexpense.composeapp.generated.resources.unknown_error
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
 import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @Composable
@@ -97,7 +85,7 @@ internal fun HomeScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            text = "iExpense",
+                            text = stringResource(Res.string.home_title),
                             style = DesignSystem.typography.headingSm,
                             color = DesignSystem.colors.textPrimary
                         )
@@ -106,7 +94,7 @@ internal fun HomeScreen(
                         IconButton(onClick = { }) {
                             Icon(
                                 imageVector = Icons.Outlined.Menu,
-                                contentDescription = "Menu",
+                                contentDescription = stringResource(Res.string.home_menu),
                                 tint = DesignSystem.colors.iconPrimary
                             )
                         }
@@ -115,7 +103,7 @@ internal fun HomeScreen(
                         IconButton(onClick = { onIntent(HomeIntent.OnSearchClick) }) {
                             Icon(
                                 imageVector = Icons.Outlined.Search,
-                                contentDescription = "Search",
+                                contentDescription = stringResource(Res.string.home_search),
                                 tint = DesignSystem.colors.iconPrimary
                             )
                         }
@@ -134,7 +122,7 @@ internal fun HomeScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = "Add expense"
+                        contentDescription = stringResource(Res.string.home_add_expense)
                     )
                 }
             },
@@ -148,12 +136,12 @@ internal fun HomeScreen(
                         icon = {
                             Icon(
                                 imageVector = Icons.Default.Home,
-                                contentDescription = "Home"
+                                contentDescription = stringResource(Res.string.home_nav_home)
                             )
                         },
                         label = {
                             Text(
-                                text = "Home",
+                                text = stringResource(Res.string.home_nav_home),
                                 style = DesignSystem.typography.componentRegularXs
                             )
                         },
@@ -169,12 +157,12 @@ internal fun HomeScreen(
                         icon = {
                             Icon(
                                 imageVector = Icons.Outlined.BarChart,
-                                contentDescription = "Summary"
+                                contentDescription = stringResource(Res.string.home_nav_summary)
                             )
                         },
                         label = {
                             Text(
-                                text = "Summary",
+                                text = stringResource(Res.string.home_nav_summary),
                                 style = DesignSystem.typography.componentRegularXs
                             )
                         },
@@ -199,172 +187,6 @@ internal fun HomeScreen(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun EmptyStateContent(
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = DesignSystem.dimens.spacingLg),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Box(
-            modifier = Modifier.size(256.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        color = DesignSystem.colors.backgroundSecondary.copy(alpha = 0.7f),
-                        shape = CircleShape
-                    )
-            )
-            Image(
-                painter = painterResource(Res.drawable.empty_state_illustration),
-                contentDescription = "A clean, modern 3D illustration of a credit card and a floating receipt.",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(245.dp)
-                    .clip(CircleShape)
-                    .border(
-                        width = 3.dp,
-                        color = DesignSystem.colors.backgroundPrimary,
-                        shape = CircleShape
-                    )
-            )
-        }
-
-        Spacer(modifier = Modifier.height(DesignSystem.dimens.spacing3xl))
-
-        Text(
-            text = "No expenses yet",
-            style = DesignSystem.typography.headingLg.copy(fontWeight = FontWeight.Bold),
-            color = DesignSystem.colors.textPrimary,
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(DesignSystem.dimens.spacingMd))
-
-        Text(
-            text = "Tap + to add one!",
-            style = DesignSystem.typography.bodyLg,
-            color = DesignSystem.colors.textSecondary,
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(DesignSystem.dimens.spacingXl))
-    }
-}
-
-@Composable
-private fun LoadingStateContent(
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = DesignSystem.dimens.spacingMd),
-        verticalArrangement = Arrangement.spacedBy(DesignSystem.dimens.spacingMd)
-    ) {
-        Spacer(modifier = Modifier.height(DesignSystem.dimens.spacingSm))
-
-        ShimmerBox(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(140.dp),
-            shape = RoundedCornerShape(DesignSystem.dimens.radiusMd)
-        ) {
-            Column(modifier = Modifier.padding(DesignSystem.dimens.spacingMd)) {
-                ShimmerBox(
-                    modifier = Modifier
-                        .width(120.dp)
-                        .height(20.dp),
-                    shape = RoundedCornerShape(4.dp)
-                )
-                Spacer(modifier = Modifier.height(DesignSystem.dimens.spacingSm))
-                ShimmerBox(
-                    modifier = Modifier
-                        .width(180.dp)
-                        .height(36.dp),
-                    shape = RoundedCornerShape(4.dp)
-                )
-                Spacer(modifier = Modifier.height(DesignSystem.dimens.spacingMd))
-                Row(horizontalArrangement = Arrangement.spacedBy(DesignSystem.dimens.spacingMd)) {
-                    ShimmerBox(
-                        modifier = Modifier
-                            .width(90.dp)
-                            .height(16.dp),
-                        shape = RoundedCornerShape(4.dp)
-                    )
-                    ShimmerBox(
-                        modifier = Modifier
-                            .width(90.dp)
-                            .height(16.dp),
-                        shape = RoundedCornerShape(4.dp)
-                    )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(DesignSystem.dimens.spacingXs))
-
-        ShimmerBox(
-            modifier = Modifier
-                .width(140.dp)
-                .height(22.dp),
-            shape = RoundedCornerShape(4.dp)
-        )
-
-        repeat(4) {
-            TransactionSkeletonItem()
-        }
-    }
-}
-
-@Composable
-private fun TransactionSkeletonItem() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(72.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(DesignSystem.dimens.spacingMd)
-        ) {
-            ShimmerBox(
-                modifier = Modifier.size(40.dp),
-                shape = CircleShape
-            )
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                ShimmerBox(
-                    modifier = Modifier
-                        .width(120.dp)
-                        .height(18.dp),
-                    shape = RoundedCornerShape(4.dp)
-                )
-                ShimmerBox(
-                    modifier = Modifier
-                        .width(80.dp)
-                        .height(14.dp),
-                    shape = RoundedCornerShape(4.dp)
-                )
-            }
-        }
-        ShimmerBox(
-            modifier = Modifier
-                .width(64.dp)
-                .height(18.dp),
-            shape = RoundedCornerShape(4.dp)
-        )
     }
 }
 

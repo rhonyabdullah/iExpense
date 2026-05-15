@@ -1,6 +1,7 @@
 package com.mobile.iexpense.feature.home
 
 import com.mobile.iexpense.core.common.effect.BaseEffectHandler
+import com.mobile.iexpense.core.navigation.IExpenseNavigation
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 
@@ -24,7 +25,7 @@ internal class HomeEffectHandler(
     }
 
     private fun performNavigateToAddExpense() {
-        // TODO: Navigate to AddExpense
+        backStack.add(IExpenseNavigation.AddExpense)
     }
 
     private fun performNavigateToSearch() {
