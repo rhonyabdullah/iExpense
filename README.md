@@ -16,24 +16,36 @@ This is a Kotlin Multiplatform project targeting Android, iOS.
 
 This project follows **Clean Architecture** with **MVI (Model-View-Intent)** in the Presentation layer.
 
-```text
-┌─────────────────────────────────────────────┐
-│           Presentation Layer                │
-│  ViewModel ──> StateFlow<State>             │
-│  dispatch(Intent)                           │
-│  SharedFlow<Effect> (one-shot side effects) │
-├─────────────────────────────────────────────┤
-│           Domain Layer                      │
-│  Use Cases  ──>  Repository Interfaces      │
-│  Domain Models, EntityCategory              │
-├─────────────────────────────────────────────┤
-│           Data Layer                        │
-│  Repository Implementations                 │
-│  Mappers, RemoteMediator, PagingSource      │
-├──────────────────┬──────────────────────────┤
-│  Database Layer  │    Network Layer         │
-│  (Room SSOT)     │    (Ktor HTTP Client)    │
-└──────────────────┴──────────────────────────┘
+```mermaid
+graph TD
+    subgraph "Presentation Layer"
+        VM[ViewModel] -->|StateFlow| S[State]
+        I[Intent] -->|dispatch| VM
+        VM -->|SharedFlow| E[Effect]
+    end
+
+    subgraph "Domain Layer"
+        UC[Use Cases] -->|interfaces| RI[Repository Interfaces]
+        DM[Domain Models]
+    end
+
+    subgraph "Data Layer"
+        RI_Impl[Repository Implementations] -.->|implements| RI
+        M[Mappers]
+        RM[RemoteMediator / PagingSource]
+    end
+
+    subgraph "Storage & Network"
+        DB[(Database Layer - Room)]
+        NET[Network Layer - Ktor]
+    end
+
+    VM -.-> UC
+    UC -.-> RI
+    RI_Impl --> M
+    RI_Impl --> RM
+    RI_Impl --> DB
+    RI_Impl --> NET
 ```
 
 ### Build and Run Android Application
