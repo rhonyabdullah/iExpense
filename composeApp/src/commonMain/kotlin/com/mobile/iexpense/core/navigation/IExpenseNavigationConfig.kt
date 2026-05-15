@@ -9,6 +9,7 @@ val iExpenseNavigationConfig = SavedStateConfiguration {
     serializersModule = SerializersModule {
         polymorphic(NavKey::class) {
             subclass(IExpenseNavigation.Home::class, IExpenseNavigation.Home.serializer())
+            subclass(IExpenseNavigation.AddExpense::class, IExpenseNavigation.AddExpense.serializer())
         }
     }
 }

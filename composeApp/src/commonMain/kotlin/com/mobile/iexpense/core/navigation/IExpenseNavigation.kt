@@ -6,4 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed interface IExpenseNavigation : NavKey {
     @Serializable data object Home : IExpenseNavigation
+    @Serializable data object AddExpense : IExpenseNavigation
 }
