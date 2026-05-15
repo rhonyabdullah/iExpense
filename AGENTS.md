@@ -78,6 +78,16 @@ When downloading assets (screenshots, HTML code, images, or any other hosted fil
 
 ---
 
+## Source Code Conventions
+
+### File Endings
+
+Every source file (`.kt`, `.kts`, `.xml`, `.md`, `.toml`, etc.) must end with **exactly one trailing newline** (blank line at end of file). This prevents GitHub Pull Request diff warnings like "No newline at end of file" and ensures compatibility with standard Unix text processing tools.
+
+**Before committing**, verify that the last byte of every changed file is `0x0a` (line feed).
+
+---
+
 ## MVI Naming Conventions
 
 Follow these naming conventions to maintain consistency:
