@@ -45,10 +45,7 @@ object AppToast {
     }
 
     fun show(type: AppToastType, message: String) {
-        val result = channel.trySend(AppToastData(type, message))
-        if (result.isSuccess) {
-            _current.value = AppToastData(type, message)
-        }
+        channel.trySend(AppToastData(type, message))
     }
 
     fun dismiss() {
