@@ -3,6 +3,7 @@ package com.mobile.iexpense.feature.home
 data class HomeState(
     val isLoading: Boolean = false,
     val expenses: List<ExpenseUi> = emptyList(),
+    val totalThisMonth: Double = 0.0,
     val error: String? = null
 )
 

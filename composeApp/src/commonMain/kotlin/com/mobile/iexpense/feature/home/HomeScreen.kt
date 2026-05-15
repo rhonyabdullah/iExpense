@@ -1,9 +1,13 @@
 package com.mobile.iexpense.feature.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -25,10 +29,14 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.mobile.iexpense.core.component.theme.AppTheme
 import com.mobile.iexpense.core.component.theme.DesignSystem
+import com.mobile.iexpense.feature.home.components.DateHeader
 import com.mobile.iexpense.feature.home.components.EmptyStateContent
 import com.mobile.iexpense.feature.home.components.LoadingStateContent
+import com.mobile.iexpense.feature.home.components.SummaryCard
+import com.mobile.iexpense.feature.home.components.TransactionItem
 import iexpense.composeapp.generated.resources.Res
 import iexpense.composeapp.generated.resources.home_add_expense
 import iexpense.composeapp.generated.resources.home_menu
@@ -150,9 +158,35 @@ internal fun HomeScreen(
                 state.expenses.isEmpty() -> EmptyStateContent(
                     modifier = Modifier.padding(innerPadding)
                 )
-                else -> Box(modifier = Modifier.padding(innerPadding)) {
-                    // TODO: populated list content
-                }
+                else -> HomeContent(
+                    state = state,
+                    modifier = Modifier.padding(innerPadding)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+internal fun HomeContent(
+    state: HomeState,
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        contentPadding = PaddingValues(horizontal = DesignSystem.dimens.spacingMd, vertical = DesignSystem.dimens.spacingMd),
+        verticalArrangement = Arrangement.spacedBy(DesignSystem.dimens.spacingMd)
+    ) {
+        item {
+            SummaryCard(total = state.totalThisMonth)
+        }
+
+        state.expenses.groupBy { it.date }.forEach { (date, expenses) ->
+            item {
+                DateHeader(date = date)
+            }
+            items(expenses, key = { it.id }) { expense ->
+                TransactionItem(expense = expense)
             }
         }
     }
@@ -163,7 +197,15 @@ internal fun HomeScreen(
 private fun HomeScreenPreview() {
     AppTheme {
         HomeScreen(
-            state = HomeState(),
+            state = HomeState(
+                expenses = listOf(
+                    ExpenseUi("1", "Starbucks", 5.50, "Food", "Today"),
+                    ExpenseUi("2", "Uber", 18.20, "Transport", "Today"),
+                    ExpenseUi("3", "Whole Foods", 142.80, "Groceries", "Yesterday"),
+                    ExpenseUi("4", "AMC Theatres", 32.00, "Entertainment", "Yesterday")
+                ),
+                totalThisMonth = 1250.00
+            ),
             onIntent = {}
         )
     }

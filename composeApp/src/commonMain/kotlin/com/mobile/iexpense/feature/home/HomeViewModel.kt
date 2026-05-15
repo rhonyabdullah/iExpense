@@ -1,15 +1,26 @@
 package com.mobile.iexpense.feature.home
 
+import androidx.lifecycle.viewModelScope
 import com.mobile.iexpense.core.common.effect.EffectChannel
 import com.mobile.iexpense.core.common.effect.sendEffect
+import com.mobile.iexpense.core.common.result.AppResult
 import com.mobile.iexpense.core.common.viewmodel.BaseViewModel
+import com.mobile.iexpense.core.domain.usecase.GetExpensesUseCase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
+import kotlin.time.Clock
+import kotlin.time.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.number
+import kotlinx.datetime.toLocalDateTime
 
-internal class HomeViewModel : BaseViewModel() {
+internal class HomeViewModel(
+    private val getExpensesUseCase: GetExpensesUseCase
+) : BaseViewModel() {
 
     private val _state = MutableStateFlow(HomeState())
     val state: StateFlow<HomeState> = _state.asStateFlow()
@@ -28,7 +39,44 @@ internal class HomeViewModel : BaseViewModel() {
     }
 
     private fun onInit() {
-        _state.value = _state.value.copy(isLoading = false, expenses = emptyList())
+        _state.reduce { it.copy(isLoading = true, expenses = emptyList(), totalThisMonth = 0.0) }
+
+        viewModelScope.launch {
+            getExpensesUseCase().collect { result ->
+                when (result) {
+                    is AppResult.Loading -> {
+                        _state.reduce { it.copy(isLoading = true) }
+                    }
+
+                    is AppResult.Success -> {
+                        val expenses = result.data
+                        val total = expenses.sumOf { it.amount }
+                        val uiExpenses = expenses.map { model ->
+                            ExpenseUi(
+                                id = model.id,
+                                title = model.title,
+                                amount = model.amount,
+                                category = model.category.key.replaceFirstChar { it.uppercase() },
+                                date = formatExpenseDate(model.date)
+                            )
+                        }
+                        _state.reduce {
+                            it.copy(
+                                isLoading = false,
+                                expenses = uiExpenses,
+                                totalThisMonth = total
+                            )
+                        }
+                    }
+
+                    is AppResult.Failure -> {
+                        _state.reduce { it.copy(isLoading = false) }
+                        _effect.sendEffect(HomeEffect.ShowError(result.error.message))
+                        handleFailure(result)
+                    }
+                }
+            }
+        }
     }
 
     private fun onAddExpenseClick() {
@@ -37,5 +85,24 @@ internal class HomeViewModel : BaseViewModel() {
 
     private fun onSearchClick() {
         _effect.sendEffect(HomeEffect.NavigateToSearch)
+    }
+
+    private fun formatExpenseDate(timestamp: Long): String {
+        val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+        val expenseDate = Instant.fromEpochMilliseconds(timestamp)
+            .toLocalDateTime(TimeZone.currentSystemDefault()).date
+
+        val daysDifference = now.toEpochDays() - expenseDate.toEpochDays()
+
+        return when (daysDifference) {
+            0L -> "Today"
+            1L -> "Yesterday"
+            else -> "${expenseDate.day.toString().padStart(2, '0')}/" +
+                    "${expenseDate.month.number.toString().padStart(2, '0')}/${expenseDate.year}"
+        }
+    }
+
+    private fun <T> MutableStateFlow<T>.reduce(reducer: (T) -> T) {
+        this.value = reducer(this.value)
     }
 }

@@ -24,7 +24,7 @@ import iexpense.composeapp.generated.resources.Res
 import iexpense.composeapp.generated.resources.add_expense_error_date_invalid
 import iexpense.composeapp.generated.resources.add_expense_field_date
 import iexpense.composeapp.generated.resources.add_expense_field_date_select
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
@@ -39,7 +39,7 @@ internal fun DateField(
 ) {
     val instant = Instant.fromEpochMilliseconds(date)
     val timeZone = instant.toLocalDateTime(TimeZone.currentSystemDefault())
-    val dateText = "${timeZone.dayOfMonth.toString().padStart(2, '0')}/" +
+    val dateText = "${timeZone.day.toString().padStart(2, '0')}/" +
             "${timeZone.month.number.toString().padStart(2, '0')}/${timeZone.year}"
 
     Column(modifier = modifier) {
