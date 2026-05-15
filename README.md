@@ -1,20 +1,33 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+# iExpense — Personal Finance Tracker
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+A modern personal finance tracking application built with **Kotlin Multiplatform** and **Compose Multiplatform**, targeting **Android** and **iOS**. iExpense enables users to log daily expenses, categorise spending, and monitor monthly totals through a clean, intuitive interface.
 
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+## Features
+
+- **Expense Tracking** — Log expenses with title, amount, date, category, and optional notes
+- **Category Management** — Organise spending across six categories: Food, Transport, Utilities, Entertainment, Health, and Shopping
+- **Monthly Summary** — View total spending for the current month at a glance
+- **Date Grouping** — Transactions organised under relative date headers (Today, Yesterday, or formatted dates)
+- **Dark Mode** — Full light and dark theme support via the design system
+- **Offline-First** — All data persisted locally with Room; fully functional without network connectivity
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| **Language** | Kotlin 2.4 |
+| **UI Framework** | Compose Multiplatform 1.10 + Material 3 |
+| **Architecture** | Clean Architecture + MVI |
+| **Dependency Injection** | Koin 4.2 |
+| **Navigation** | JetBrains Navigation3 (multiplatform-nav3) |
+| **Database** | Room KMP with bundled SQLite |
+| **Networking** | Ktor HTTP Client |
+| **Serialization** | Kotlinx Serialization |
+| **DateTime** | Kotlinx Datetime |
 
 ## Architecture
 
-This project follows **Clean Architecture** with **MVI (Model-View-Intent)** in the Presentation layer.
+iExpense follows **Clean Architecture** with **MVI (Model-View-Intent)** in the Presentation layer and an **Offline-First** data strategy, where Room serves as the Single Source of Truth.
 
 ```mermaid
 graph TD
@@ -32,7 +45,6 @@ graph TD
     subgraph "Data Layer"
         RI_Impl[Repository Implementations] -.->|implements| RI
         M[Mappers]
-        RM[RemoteMediator / PagingSource]
     end
 
     subgraph "Storage & Network"
@@ -43,29 +55,134 @@ graph TD
     VM -.-> UC
     UC -.-> RI
     RI_Impl --> M
-    RI_Impl --> RM
     RI_Impl --> DB
     RI_Impl --> NET
 ```
 
-### Build and Run Android Application
+### Layer Breakdown
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+| Layer | Location | Description |
+|-------|----------|-------------|
+| **Presentation** | `feature/**/` | MVI ViewModels, State, Intent, Effect, EffectHandler |
+| **Domain** | `core/domain/` | Domain models, repository interfaces, use cases — zero external dependencies |
+| **Data** | `core/data/` | Repository implementations, mappers |
+| **Database** | `core/database/` | Room entities, DAOs, data sources |
+| **Network** | `core/network/` | Ktor client, API services, DTOs |
 
-### Build and Run iOS Application
+### Screen Architecture
 
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+Every screen follows a three-layer composable structure:
+
+```
+Route → Screen → Content
+```
+
+- **Route** — Handles dependency injection, lifecycle wiring, effect collection, and initial intent dispatch
+- **Screen** — Stateless composable receiving only `State` and `onIntent` callback
+- **Content** — Pure UI arranged within a `Scaffold`
+
+### State Management
+
+- **State** — Single `data class` representing the entire screen state, exposed as `StateFlow<State>`
+- **Intent** — `sealed interface` for all user actions, dispatched via `viewModel.dispatch(intent)`
+- **Effect** — `sealed interface` extending `UiEffect` for one-shot side effects (navigation, error toasts), emitted through a `Channel`
+
+## Design System
+
+The project includes a comprehensive design system with:
+
+- **Typography** — 28 named tokens across Headings, Titles, Body, and Component styles; Poppins font family
+- **Colours** — Semantic colour tokens for Background, Text, Border, Icon, and Accent roles; primary purple palette
+- **Spacing** — 8-stop scale from `spacingXs` (4dp) through `spacing4xl` (64dp)
+- **Radius** — 6-stop scale from `radiusXs` (4dp) through `radiusFull`
+- **Components** — Reusable `AppButton`, `AppTextField`, `AppLoadingOverlay`, `AppToast`, `ShimmerBox`, and more
+- **Accessibility** — All text-on-background pairings meet WCAG AA standards
+
+For detailed specifications, see [`DESIGN.md`](DESIGN.md).
+
+## Getting Started
+
+### Prerequisites
+
+- **Android Studio** Ladybug or later (for Android development)
+- **Xcode** 16 or later (for iOS development)
+- **JDK** 17 or later
+
+### Building
+
+#### Android
+
+```shell
+./gradlew :composeApp:assembleDebug
+```
+
+On Windows:
+
+```shell
+.\gradlew.bat :composeApp:assembleDebug
+```
+
+#### iOS
+
+1. Build the shared framework:
+   ```shell
+   ./gradlew :composeApp:linkDebugFrameworkIosSimulatorArm64
+   ```
+2. Open `iosApp/iosApp.xcodeproj` in Xcode
+3. Select a simulator target and run
+
+### Testing
+
+```shell
+./gradlew :composeApp:testDebugUnitTest
+```
+
+### Linting
+
+```shell
+./gradlew :composeApp:lint
+```
+
+## Project Structure
+
+```
+├── composeApp/
+│   └── src/
+│       ├── commonMain/kotlin/com/mobile/iexpense/
+│       │   ├── feature/home/             # Home screen (MVI)
+│       │   ├── feature/addexpense/       # Add Expense screen (MVI)
+│       │   ├── core/domain/              # Domain models, use cases, repository interfaces
+│       │   ├── core/data/                # Repository implementations, mappers
+│       │   ├── core/database/            # Room DB, entities, DAOs
+│       │   ├── core/network/             # Ktor API services, DTOs
+│       │   ├── core/component/           # Reusable Compose components & theme
+│       │   ├── core/common/              # Shared utilities (AppResult, BaseViewModel, etc.)
+│       │   ├── core/navigation/          # NavKey definitions & serialization
+│       │   └── di/                       # Koin module definitions
+│       └── androidMain/                  # Android-specific implementations
+├── iosApp/                               # iOS entry point & Xcode project
+├── architecture/                         # Detailed architecture & pattern documentation
+├── design/                               # Light/dark colour token source files
+├── AGENTS.md                             # Agent instruction set
+└── DESIGN.md                             # Design system specification
+```
+
+## Documentation
+
+Comprehensive architecture and pattern documentation is available under the [`architecture/`](architecture/) directory:
+
+| Document | Content |
+|----------|---------|
+| [`domain-layer.md`](architecture/domain-layer.md) | Domain models, repository interfaces, use cases, AppResult |
+| [`data-layer.md`](architecture/data-layer.md) | Repository patterns, mappers, RemoteMediator, PagingSource |
+| [`database-layer.md`](architecture/database-layer.md) | Room entities, DAOs, data sources, TypeConverter |
+| [`network-layer.md`](architecture/network-layer.md) | Ktor setup, API services, network data sources |
+| [`presentation-layer.md`](architecture/presentation-layer.md) | MVI ViewModels, State, Intent, Effect, reducer pattern |
+| [`dependency-injection.md`](architecture/dependency-injection.md) | Koin module structure and registration patterns |
+| [`new-feature-cheatsheet.md`](architecture/new-feature-cheatsheet.md) | Step-by-step scaffold for adding new features |
+
+UI-specific documentation resides under [`architecture/ui/`](architecture/ui/), covering navigation, screen architecture, state collection, event dispatching, paging integration, theming, and more.
 
 ---
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html).
