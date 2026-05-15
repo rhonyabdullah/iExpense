@@ -13,8 +13,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 
 class ExpenseRepositoryImpl(
-    private val databaseDataSource: ExpenseDatabaseDataSource,
-    private val networkDataSource: ExpenseNetworkDataSource
+    private val databaseDataSource: ExpenseDatabaseDataSource
 ) : ExpenseRepository {
 
     override fun getExpenses(): Flow<AppResult<List<ExpenseModel>>> = flow {
