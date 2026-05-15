@@ -28,8 +28,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mobile.iexpense.core.common.util.toCurrencyString
+import com.mobile.iexpense.core.component.theme.AppTheme
 import com.mobile.iexpense.core.component.theme.DesignSystem
+import com.mobile.iexpense.core.domain.model.EntityCategory
 import com.mobile.iexpense.feature.home.ExpenseUi
 
 @Composable
@@ -85,7 +89,7 @@ internal fun TransactionItem(
                         .padding(horizontal = 6.dp, vertical = 2.dp)
                 ) {
                     Text(
-                        text = expense.category,
+                        text = expense.category.key.replaceFirstChar { it.uppercase() },
                         style = DesignSystem.typography.componentRegularXs,
                         color = DesignSystem.colors.textSecondary
                     )
@@ -94,7 +98,7 @@ internal fun TransactionItem(
         }
 
         Text(
-            text = "-$${String.format("%.2f", expense.amount)}",
+            text = "-$${expense.amount.toCurrencyString()}",
             style = DesignSystem.typography.titleMd,
             color = DesignSystem.colors.textCritical
         )
@@ -102,42 +106,78 @@ internal fun TransactionItem(
 }
 
 @Composable
-private fun resolveCategoryStyle(category: String): Triple<ImageVector, Color, Color> {
-    return when (category.lowercase()) {
-        "food" -> Triple(
+private fun resolveCategoryStyle(category: EntityCategory.ExpenseCategory): Triple<ImageVector, Color, Color> {
+    return when (category) {
+        EntityCategory.ExpenseCategory.FOOD -> Triple(
             Icons.Default.Restaurant,
             DesignSystem.colors.backgroundCardSecondary,
             DesignSystem.colors.fixedOnSecondary
         )
-        "transport" -> Triple(
+        EntityCategory.ExpenseCategory.TRANSPORT -> Triple(
             Icons.Default.DirectionsCar,
             DesignSystem.colors.backgroundCardTertiary,
             DesignSystem.colors.textOnTertiary
         )
-        "groceries", "shopping" -> Triple(
+        EntityCategory.ExpenseCategory.SHOPPING -> Triple(
             Icons.Default.ShoppingCart,
             DesignSystem.colors.backgroundCardPrimary,
             DesignSystem.colors.textColorOnTheme
         )
-        "entertainment" -> Triple(
+        EntityCategory.ExpenseCategory.ENTERTAINMENT -> Triple(
             Icons.Default.Movie,
             DesignSystem.colors.backgroundTertiary,
             DesignSystem.colors.textSecondary
         )
-        "utilities" -> Triple(
+        EntityCategory.ExpenseCategory.UTILITIES -> Triple(
             Icons.Default.Home,
             DesignSystem.colors.fixedSecondary,
             DesignSystem.colors.fixedOnSecondary
         )
-        "health" -> Triple(
+        EntityCategory.ExpenseCategory.HEALTH -> Triple(
             Icons.Default.Favorite,
             DesignSystem.colors.fixedTertiary,
             DesignSystem.colors.fixedOnTertiary
         )
-        else -> Triple(
-            Icons.Default.Payment,
-            DesignSystem.colors.backgroundSecondary,
-            DesignSystem.colors.textSecondary
-        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+internal fun TransactionItemPreview() {
+    AppTheme {
+        Column(
+            modifier = Modifier
+                .background(DesignSystem.colors.backgroundPrimary)
+                .padding(DesignSystem.dimens.spacingMd),
+            verticalArrangement = Arrangement.spacedBy(DesignSystem.dimens.spacingMd)
+        ) {
+            TransactionItem(
+                expense = ExpenseUi(
+                    id = "1",
+                    title = "Starbucks",
+                    amount = 5.50,
+                    category = "Food",
+                    date = "Today"
+                )
+            )
+            TransactionItem(
+                expense = ExpenseUi(
+                    id = "2",
+                    title = "Uber",
+                    amount = 18.20,
+                    category = "Transport",
+                    date = "Today"
+                )
+            )
+            TransactionItem(
+                expense = ExpenseUi(
+                    id = "3",
+                    title = "Whole Foods",
+                    amount = 142.80,
+                    category = "Groceries",
+                    date = "Yesterday"
+                )
+            )
+        }
     }
 }

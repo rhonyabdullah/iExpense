@@ -3,7 +3,7 @@ package com.mobile.iexpense.feature.home
 import androidx.lifecycle.viewModelScope
 import com.mobile.iexpense.core.common.effect.EffectChannel
 import com.mobile.iexpense.core.common.effect.sendEffect
-import com.mobile.iexpense.core.common.result.AppResult
+import com.mobile.iexpense.core.common.result.handle
 import com.mobile.iexpense.core.common.viewmodel.BaseViewModel
 import com.mobile.iexpense.core.domain.usecase.GetExpensesUseCase
 import kotlinx.coroutines.flow.Flow
@@ -12,11 +12,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import kotlin.time.Clock
-import kotlin.time.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 internal class HomeViewModel(
     private val getExpensesUseCase: GetExpensesUseCase
@@ -42,38 +42,31 @@ internal class HomeViewModel(
         _state.reduce { it.copy(isLoading = true, expenses = emptyList(), totalThisMonth = 0.0) }
 
         viewModelScope.launch {
-            getExpensesUseCase().collect { result ->
-                when (result) {
-                    is AppResult.Loading -> {
-                        _state.reduce { it.copy(isLoading = true) }
+            getExpensesUseCase().handle {
+                onLoading { _state.reduce { it.copy(isLoading = true) } }
+                onSuccess { expenses ->
+                    val total = expenses.sumOf { it.amount }
+                    val uiExpenses = expenses.map { model ->
+                        ExpenseUi(
+                            id = model.id,
+                            title = model.title,
+                            amount = model.amount,
+                            category = model.category,
+                            date = formatExpenseDate(model.date)
+                        )
                     }
-
-                    is AppResult.Success -> {
-                        val expenses = result.data
-                        val total = expenses.sumOf { it.amount }
-                        val uiExpenses = expenses.map { model ->
-                            ExpenseUi(
-                                id = model.id,
-                                title = model.title,
-                                amount = model.amount,
-                                category = model.category.key.replaceFirstChar { it.uppercase() },
-                                date = formatExpenseDate(model.date)
-                            )
-                        }
-                        _state.reduce {
-                            it.copy(
-                                isLoading = false,
-                                expenses = uiExpenses,
-                                totalThisMonth = total
-                            )
-                        }
+                    _state.reduce {
+                        it.copy(
+                            isLoading = false,
+                            expenses = uiExpenses,
+                            totalThisMonth = total
+                        )
                     }
-
-                    is AppResult.Failure -> {
-                        _state.reduce { it.copy(isLoading = false) }
-                        _effect.sendEffect(HomeEffect.ShowError(result.error.message))
-                        handleFailure(result)
-                    }
+                }
+                onFailure { error ->
+                    _state.reduce { it.copy(isLoading = false) }
+                    _effect.sendEffect(HomeEffect.ShowError(error.message))
+                    handleFailure(error)
                 }
             }
         }

@@ -1,5 +1,7 @@
 package com.mobile.iexpense.feature.home
 
+import com.mobile.iexpense.core.domain.model.EntityCategory
+
 data class HomeState(
     val isLoading: Boolean = false,
     val expenses: List<ExpenseUi> = emptyList(),
@@ -11,6 +13,6 @@ data class ExpenseUi(
     val id: String,
     val title: String,
     val amount: Double,
-    val category: String,
+    val category: EntityCategory.ExpenseCategory,
     val date: String
 )

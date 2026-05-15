@@ -6,7 +6,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 
 abstract class BaseViewModel : ViewModel() {
 
-    protected open fun handleFailure(failure: AppResult.Failure<*>) {
+    protected open fun handleFailure(error: Throwable) {
         // log to Firebase / Crashlytics
     }
 }

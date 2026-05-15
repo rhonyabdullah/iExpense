@@ -10,7 +10,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
+import com.mobile.iexpense.core.common.util.toCurrencyString
+import com.mobile.iexpense.core.component.theme.AppTheme
 import com.mobile.iexpense.core.component.theme.DesignSystem
 import iexpense.composeapp.generated.resources.Res
 import iexpense.composeapp.generated.resources.home_total_this_month
@@ -19,17 +21,17 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 internal fun SummaryCard(
     total: Double,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .background(
                 color = DesignSystem.colors.backgroundSecondary,
-                shape = RoundedCornerShape(DesignSystem.dimens.radiusMd)
+                shape = RoundedCornerShape(DesignSystem.dimens.radiusMd),
             )
             .padding(DesignSystem.dimens.spacingLg),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -41,10 +43,21 @@ internal fun SummaryCard(
                 color = DesignSystem.colors.textSecondary
             )
             Text(
-                text = "$${String.format("%.2f", total)}",
+                text = "$${total.toCurrencyString()}",
                 style = DesignSystem.typography.headingXl,
                 color = DesignSystem.colors.textPrimary
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+internal fun SummaryCardPreview() {
+    AppTheme {
+        SummaryCard(
+            total = 1234.56,
+            modifier = Modifier.padding(DesignSystem.dimens.spacingMd)
+        )
     }
 }

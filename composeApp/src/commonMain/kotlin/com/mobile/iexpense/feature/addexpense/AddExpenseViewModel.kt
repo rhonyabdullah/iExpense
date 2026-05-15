@@ -3,7 +3,7 @@ package com.mobile.iexpense.feature.addexpense
 import androidx.lifecycle.viewModelScope
 import com.mobile.iexpense.core.common.effect.EffectChannel
 import com.mobile.iexpense.core.common.effect.sendEffect
-import com.mobile.iexpense.core.common.result.AppResult
+import com.mobile.iexpense.core.common.result.handle
 import com.mobile.iexpense.core.common.viewmodel.BaseViewModel
 import com.mobile.iexpense.core.domain.model.ExpenseModel
 import com.mobile.iexpense.core.domain.usecase.AddExpenseUseCase
@@ -84,8 +84,6 @@ internal class AddExpenseViewModel(
 
         if (hasError) return
 
-        _state.reduce { it.copy(isLoading = true) }
-
         viewModelScope.launch {
             val expense = ExpenseModel(
                 id = Random.nextLong().toString(),
@@ -95,21 +93,18 @@ internal class AddExpenseViewModel(
                 date = date,
                 note = _state.value.notes.ifBlank { null }
             )
-
-            when (val result = addExpenseUseCase(expense)) {
-                is AppResult.Success -> {
+            addExpenseUseCase(expense).handle {
+                onLoading { _state.reduce { it.copy(isLoading = true) } }
+                onSuccess {
                     _state.reduce { it.copy(isLoading = false) }
                     _effect.sendEffect(AddExpenseEffect.ExpenseSaved)
                     _effect.sendEffect(AddExpenseEffect.NavigateToHome)
                 }
-
-                is AppResult.Failure -> {
+                onFailure { error ->
                     _state.reduce { it.copy(isLoading = false) }
-                    _effect.sendEffect(AddExpenseEffect.ShowError(result.error.message))
-                    handleFailure(result)
+                    _effect.sendEffect(AddExpenseEffect.ShowError(error.message))
+                    handleFailure(error)
                 }
-
-                is AppResult.Loading -> { /* already handled */ }
             }
         }
     }

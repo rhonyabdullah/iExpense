@@ -192,7 +192,7 @@ internal fun HomeContent(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun HomeScreenPreview() {
     AppTheme {
@@ -211,7 +211,7 @@ private fun HomeScreenPreview() {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun EmptyStateContentPreview() {
     AppTheme {
@@ -221,7 +221,7 @@ private fun EmptyStateContentPreview() {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun LoadingStateContentPreview() {
     AppTheme {

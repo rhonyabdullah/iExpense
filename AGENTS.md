@@ -418,6 +418,22 @@ To maintain Clean Architecture, follow these rules:
 >
 > **String Resources**: Every user-facing text — including labels, placeholders, `contentDescription`, error messages, and toast text — must use `stringResource(Res.string.*)`. Never hardcode English strings in composables, ViewModels, or EffectHandlers. All strings must be defined in `composeResources/values/strings.xml` (and mirrored in locale-specific variants).
 
+### Compose Preview Guidelines
+
+When generating or modifying `@Preview` annotations for Composable functions, **always** include `showBackground = true`. This ensures the preview renders with a visible background and avoids transparent or invisible previews in the design tools.
+
+```kotlin
+// Correct
+@Preview(showBackground = true)
+@Composable
+internal fun SummaryCardPreview() { ... }
+
+// Incorrect
+@Preview
+@Composable
+internal fun SummaryCardPreview() { ... }
+```
+
 ### Design System File Architecture
 
 When generating or syncing design tokens to the codebase, produce files in this structure (per [`DESIGN.md`](DESIGN.md) §13):
