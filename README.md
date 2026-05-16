@@ -11,6 +11,14 @@ A modern personal finance tracking application built with **Kotlin Multiplatform
 - **Dark Mode** - Full light and dark theme support via the design system
 - **Offline-First** - All data persisted locally with Room; fully functional without network connectivity
 
+## Screenshots
+
+| Home Screen | Add Expense | Card Component |
+|-------------|-------------|----------------|
+| ![Home Screen](design/home.png) | ![Add Expense](design/add_expense.png) | ![Card Component](design/card_banner.png) |
+
+[View live design preview on Stitch ↗](https://stitch.withgoogle.com/preview/12179744598835652443?node-id=f272d6584e5d4d7ea4c76db5a56934b0)
+
 ## Tech Stack
 
 | Layer | Technology |

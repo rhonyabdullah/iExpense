@@ -7,6 +7,10 @@ An **architecture-compliant** design specification for Google Stitch (Stitch UI 
 - **Source of truth for components**: [`architecture/ui/reusable-ui-patterns.md`](architecture/ui/reusable-ui-patterns.md), [`architecture/ui/ui-cheatsheet.md`](architecture/ui/ui-cheatsheet.md), [`architecture/ui/screen-architecture.md`](architecture/ui/screen-architecture.md).
 - **Source of truth for typography**: Poppins (400 / 600 / 700), as specified in the architecture asset system.
 
+![Design System Overview](design/design_system.png)
+
+[View live design preview on Stitch ↗](https://stitch.withgoogle.com/preview/12179744598835652443?node-id=f272d6584e5d4d7ea4c76db5a56934b0)
+
 ---
 
 ## 1. Colors — Semantic Tokens (`CustomThemeColors`)
