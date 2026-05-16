@@ -15,7 +15,7 @@ A modern personal finance tracking application built with **Kotlin Multiplatform
 
 | Home Screen | Add Expense | Card Component |
 |-------------|-------------|----------------|
-| ![Home Screen](design/home.png) | ![Add Expense](design/add_expense.png) | ![Card Component](design/card_banner.png) |
+| ![Home Screen](assets/home.png) | ![Add Expense](assets/add_expense.png) | ![Card Component](assets/card_banner.png) |
 
 [View live design preview on Stitch ↗](https://stitch.withgoogle.com/preview/12179744598835652443?node-id=f272d6584e5d4d7ea4c76db5a56934b0)
 
