@@ -32,6 +32,11 @@ internal class HomeViewModel(
         dispatch(HomeIntent.OnInit)
     }
 
+    override fun onFailure(error: Throwable) {
+        _state.reduce { it.copy(isLoading = false) }
+        _effect.sendEffect(HomeEffect.ShowError(error.message))
+    }
+
     fun dispatch(intent: HomeIntent) = when (intent) {
         HomeIntent.OnInit -> onInit()
         HomeIntent.OnAddExpenseClick -> onAddExpenseClick()
@@ -63,11 +68,7 @@ internal class HomeViewModel(
                         )
                     }
                 }
-                onFailure { error ->
-                    _state.reduce { it.copy(isLoading = false) }
-                    _effect.sendEffect(HomeEffect.ShowError(error.message))
-                    handleFailure(error)
-                }
+                onFailure(::handleFailure)
             }
         }
     }

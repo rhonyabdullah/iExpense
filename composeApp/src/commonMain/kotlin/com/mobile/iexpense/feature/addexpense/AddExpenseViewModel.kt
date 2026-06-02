@@ -29,6 +29,11 @@ internal class AddExpenseViewModel(
         dispatch(AddExpenseIntent.OnInit)
     }
 
+    override fun onFailure(error: Throwable) {
+        _state.reduce { it.copy(isLoading = false) }
+        _effect.sendEffect(AddExpenseEffect.ShowError(error.message))
+    }
+
     fun dispatch(intent: AddExpenseIntent) = when (intent) {
         AddExpenseIntent.OnInit -> onInit()
         is AddExpenseIntent.TitleChanged -> _state.reduce {
@@ -100,11 +105,7 @@ internal class AddExpenseViewModel(
                     _effect.sendEffect(AddExpenseEffect.ExpenseSaved)
                     _effect.sendEffect(AddExpenseEffect.NavigateToHome)
                 }
-                onFailure { error ->
-                    _state.reduce { it.copy(isLoading = false) }
-                    _effect.sendEffect(AddExpenseEffect.ShowError(error.message))
-                    handleFailure(error)
-                }
+                onFailure(::handleFailure)
             }
         }
     }
