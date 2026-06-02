@@ -138,9 +138,12 @@ sealed interface SignInEmailEffect : UiEffect {
 
 ```kotlin
 abstract class BaseViewModel : ViewModel() {
-    @CallSuper
-    open fun handleFailure(failure: AppResult.Failure<*>) {
+
+    abstract fun onFailure(error: Throwable)
+
+    protected open fun handleFailure(failure: AppResult.Failure<*>) {
         // log to Firebase / Crashlytics
+        onFailure(failure.error)
     }
 }
 
@@ -162,10 +165,9 @@ class {Feature}ViewModel(
         {Feature}Intent.DismissError -> _state.reduce { it.copy(error = null) }
     }
 
-    override fun handleFailure(failure: AppResult.Failure<*>) {
-        super.handleFailure(failure)
+    override fun onFailure(error: Throwable) {
         _state.reduce { it.copy(isLoading = false) }
-        _effect.sendEffect({Feature}Effect.ShowError(failure.message))
+        _effect.sendEffect({Feature}Effect.ShowError(error.message))
     }
 }
 ```
@@ -315,10 +317,16 @@ val state by viewModel.state.collectAsStateWithLifecycle()
 Used across the app for loading/success/failure states. Defined in `core/common/result/AppResult.kt`.
 
 ```kotlin
-sealed class AppResult<T> {
-    data class Loading<T>(val data: T? = null) : AppResult<T>()
-    data class Success<T>(val data: T) : AppResult<T>()
-    data class Failure<T>(val error: Throwable, val data: T? = null) : AppResult<T>()
+sealed interface AppResult<T> {
+    data class Loading<T>(val data: T? = null) : AppResult<T>
+    data class Success<T>(val data: T) : AppResult<T>
+    data class Failure<T>(val error: Throwable) : AppResult<T>
+}
+
+fun <T> AppResult<T>.value(): T? = when (this) {
+    is AppResult.Loading -> data
+    is AppResult.Success -> data
+    is AppResult.Failure -> null
 }
 ```
 
